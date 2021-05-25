@@ -159,9 +159,10 @@ class Client
      * @param string|null $orderNumber
      * @param int|null $weight Weight of the parcel in grams. The default set in Sendcloud will be used if null or zero.
      * @param string|null $customsInvoiceNumber
-     * @param int|null One of {@see Parcel::CUSTOMS_SHIPMENT_TYPES}.
+     * @param int|null $customsShipmentType
      * @param ParcelItem[]|null $items Items contained in the parcel.
      * @param string|null $postNumber Number that may be required to send to a service point.
+     * @param int|null $quantity
      * @return Parcel
      * @throws SendCloudRequestException
      */
@@ -173,7 +174,8 @@ class Client
         ?string $customsInvoiceNumber = null,
         ?int $customsShipmentType = null,
         ?array $items = null,
-        ?string $postNumber = null
+        ?string $postNumber = null,
+        ?int $quantity = null
     ): Parcel {
         $parcelData = $this->getParcelData(
             null,
@@ -187,7 +189,8 @@ class Client
             $customsInvoiceNumber,
             $customsShipmentType,
             $items,
-            $postNumber
+            $postNumber,
+            $quantity
         );
 
         try {
@@ -220,6 +223,7 @@ class Client
             null,
             null,
             false,
+            null,
             null,
             null,
             null,
@@ -262,6 +266,7 @@ class Client
             true,
             $shippingMethod,
             $senderAddress,
+            null,
             null,
             null,
             null,
@@ -475,9 +480,10 @@ class Client
      * @param SenderAddress|int|Address|null $senderAddress Passing null will pick SendCloud's default. An Address will
      * use undocumented behavior that will disable branding personalizations.
      * @param string|null $customsInvoiceNumber
-     * @param int|null One of {@see Parcel::CUSTOMS_SHIPMENT_TYPES}.
+     * @param int|null $customsShipmentType
      * @param ParcelItem[]|null $items
      * @param string|null $postNumber
+     * @param int|null $quantity
      * @return mixed[]
      */
     protected function getParcelData(
@@ -492,7 +498,8 @@ class Client
         ?string $customsInvoiceNumber,
         ?int $customsShipmentType,
         ?array $items,
-        ?string $postNumber
+        ?string $postNumber,
+        ?int $quantity
     ): array {
         $parcelData = [];
 
@@ -580,6 +587,10 @@ class Client
             }
 
             $parcelData['parcel_items'] = $itemsData;
+        }
+
+        if($quantity){
+            $parcelData['quantity'] = $quantity;
         }
 
         // Additional fields are only added when requesting a label
