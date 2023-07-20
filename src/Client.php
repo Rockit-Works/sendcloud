@@ -484,6 +484,7 @@ class Client
      * @param ParcelItem[]|null $items
      * @param string|null $postNumber
      * @param int|null $quantity
+     * @param int|null $contract
      * @return mixed[]
      */
     protected function getParcelData(
@@ -499,7 +500,8 @@ class Client
         ?int $customsShipmentType,
         ?array $items,
         ?string $postNumber,
-        ?int $quantity
+        ?int $quantity,
+        ?int $contract = null
     ): array {
         $parcelData = [];
 
@@ -541,6 +543,10 @@ class Client
 
         if ($customsInvoiceNumber) {
             $parcelData['customs_invoice_nr'] = $customsInvoiceNumber;
+        }
+
+        if ($contract) {
+            $parcelData['contract'] = $contract;
         }
 
         if ($customsShipmentType !== null) {
